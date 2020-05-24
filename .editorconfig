@@ -1,0 +1,22 @@
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+indent_size = 4
+
+[*.csproj]
+indent_size = 4
+
+[*.json]
+indent_size = 4
+
+[*.cs]
+csharp_prefer_braces = true:warning
+csharp_style_var_for_built_in_types = true:suggestion
+
+dotnet_separate_import_directive_groups = true
+dotnet_style_require_accessibility_modifiers = always:warning
+dotnet_sort_system_directives_first = true
