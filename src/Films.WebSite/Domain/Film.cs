@@ -27,6 +27,9 @@ namespace FilmsLibrary.Domain
         [Column("director", TypeName = "nvarchar(MAX)")]
         [Required]
         public string Director { get; set; }
-    }
 
+        [Column("creator_id")]
+        public string CreatorId { get; set; }
+        public User Creator { get; set; }
+    }
 }
