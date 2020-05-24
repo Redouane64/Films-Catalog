@@ -11,6 +11,8 @@ using Films.WebSite.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Films.Website.Domain;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Films.WebSite
 {
@@ -33,6 +35,17 @@ namespace Films.WebSite
             services.AddControllersWithViews();
 
             services.AddRazorPages();
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme);
+            services.AddAuthorization();
+
+            services.AddIdentityCore<User>(options =>
+            {
+                // Identity stuff goes here..
+            })
+            .AddUserManager<UserManager<User>>()
+            .AddSignInManager<SignInManager<User>>()
+            .AddEntityFrameworkStores<FilmsDbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
