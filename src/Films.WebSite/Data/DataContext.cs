@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Films.WebSite.Data
 {
-    public class FilmsDbContext : IdentityDbContext<User>
+    public class DataContext : IdentityDbContext<User>
     {
-        public FilmsDbContext(DbContextOptions<FilmsDbContext> options)
+        public DataContext(DbContextOptions<DataContext> options)
             : base(options)
         {
         }
