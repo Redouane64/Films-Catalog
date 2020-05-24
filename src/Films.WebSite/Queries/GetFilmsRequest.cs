@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +18,11 @@ namespace FilmsLibrary.Queries
 
         public GetFilmsRequest(int pageSize, int offset)
         {
+            if(pageSize == 0 || offset == 0)
+            {
+                throw new ArgumentException();
+            }
+
             PageSize = pageSize;
             Offset = offset;
         }
@@ -30,7 +36,7 @@ namespace FilmsLibrary.Queries
 
             public GetFilmsRequestHandler(DataContext context)
             {
-                this.context = context;
+                this.context = context ?? throw new ArgumentNullException(nameof(context));
             }
 
             public async Task<IEnumerable<Film>> Handle(GetFilmsRequest request, CancellationToken cancellationToken)
