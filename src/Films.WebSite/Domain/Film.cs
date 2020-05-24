@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FilmsLibrary.Domain
+namespace Films.Website.Domain
 {
 
     /// <summary>

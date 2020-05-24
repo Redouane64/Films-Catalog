@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 using Microsoft.AspNetCore.Identity;
 
-namespace FilmsLibrary.Domain
+namespace Films.Website.Domain
 {
     [Table("users", Schema = "catalog")]
     public class User : IdentityUser
