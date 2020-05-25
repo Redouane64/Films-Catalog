@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,19 +12,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FilmsLibrary.Commands
 {
-    public class EditFilmRequest : IRequest<Film>
+    public class EditFilmRequest : IRequest
     {
-        public int FilmId { get; set; }
+        public int Id { get; set; }
 
+        [Required]
         public string Title { get; set; }
-        
+
+        [Required]
         public string Description { get; set; }
-        
+
         public int Year { get; set; }
 
+        [Required]
         public string Director { get; set; }
 
-        public class EditFilmRequestHandler : IRequestHandler<EditFilmRequest, Film>
+        public class EditFilmRequestHandler : IRequestHandler<EditFilmRequest>
         {
             private readonly DataContext context;
 
@@ -32,14 +36,14 @@ namespace FilmsLibrary.Commands
                 this.context = context ?? throw new ArgumentNullException(nameof(context));
             }
 
-            public async Task<Film> Handle(EditFilmRequest request, CancellationToken cancellationToken)
+            public async Task<Unit> Handle(EditFilmRequest request, CancellationToken cancellationToken)
             {
-                var film = await context.Films.SingleOrDefaultAsync(f => f.Id == request.FilmId, cancellationToken);
+                var film = await context.Films.SingleOrDefaultAsync(f => f.Id == request.Id, cancellationToken);
 
                 if (film is null)
                 {
                     // TODO: do something?
-                    return null;
+                    return await Task.FromCanceled<Unit>(cancellationToken);
                 }
 
                 // We may use Object mapper if there are many properties.
@@ -68,7 +72,7 @@ namespace FilmsLibrary.Commands
                     throw;
                 }
 
-                return film;
+                return await Unit.Task;
             }
         }
     }

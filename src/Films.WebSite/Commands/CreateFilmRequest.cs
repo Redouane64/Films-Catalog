@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,17 +10,20 @@ using MediatR;
 
 namespace FilmsLibrary.Commands
 {
-    public class CreateFilmRequest : IRequest<Film>
+    public class CreateFilmRequest : IRequest<int>
     {
+        [Required]
         public string Title { get; set; }
 
+        [Required]
         public string Description { get; set; }
 
+        [Required]
         public string Director { get; set; }
 
         public int Year { get; set; }
 
-        public class CreateFilmRequestHandler : IRequestHandler<CreateFilmRequest, Film>
+        public class CreateFilmRequestHandler : IRequestHandler<CreateFilmRequest, int>
         {
             private readonly DataContext context;
 
@@ -28,7 +32,7 @@ namespace FilmsLibrary.Commands
                 this.context = context ?? throw new ArgumentNullException(nameof(context));
             }
 
-            public async Task<Film> Handle(CreateFilmRequest request, CancellationToken cancellationToken)
+            public async Task<int> Handle(CreateFilmRequest request, CancellationToken cancellationToken)
             {
                 var film = new Film
                 {
@@ -51,7 +55,7 @@ namespace FilmsLibrary.Commands
                     throw;
                 }
 
-                return film;
+                return film.Id;
             }
         }
     }
