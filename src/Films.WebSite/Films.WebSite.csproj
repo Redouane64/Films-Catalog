@@ -4,7 +4,7 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <UserSecretsId>aspnet-Films.WebSite-996C1028-1A9B-4F32-BC3A-EA43E7CDE3C2</UserSecretsId>
         <CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
-        <RootNamespace>FilmsLibrary</RootNamespace>
+        <RootNamespace>Films.WebSite</RootNamespace>
         <Authors>Redhouane Sobaihi</Authors>
     </PropertyGroup>
 
