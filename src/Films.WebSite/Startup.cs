@@ -13,6 +13,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Films.Website.Domain;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using MediatR;
+using AutoMapper;
+using FilmsLibrary.Options;
+using FilmsLibrary.Filters;
 
 namespace Films.WebSite
 {
@@ -28,11 +32,13 @@ namespace Films.WebSite
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<FilmsDbContext>(options =>
+            services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("Default")));
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(options => {
+                options.Filters.Add<PagingFilter>();
+            });
 
             services.AddRazorPages();
 
@@ -45,7 +51,12 @@ namespace Films.WebSite
             })
             .AddUserManager<UserManager<User>>()
             .AddSignInManager<SignInManager<User>>()
-            .AddEntityFrameworkStores<FilmsDbContext>();
+            .AddEntityFrameworkStores<DataContext>();
+
+            services.AddMediatR(typeof(Startup));
+            services.AddAutoMapper(typeof(Startup));
+
+            services.Configure<DefaultPagingOptions>(Configuration.GetSection(nameof(DefaultPagingOptions)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
