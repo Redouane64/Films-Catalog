@@ -17,13 +17,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FilmsLibrary.Queries
 {
-    public class GetFilmsRequest : IRequest<IEnumerable<FilmViewModel>>
+    public class GetFilmsRequest : IRequest<ItemsPage<FilmViewModel>>
     {
 
         public int? PageSize { get; set; }
         public int? Offset { get; set; }
 
-        public class GetFilmsRequestHandler : IRequestHandler<GetFilmsRequest, IEnumerable<FilmViewModel>>
+        public class GetFilmsRequestHandler : IRequestHandler<GetFilmsRequest, ItemsPage<FilmViewModel>>
         {
             private readonly DataContext context;
             private readonly IMapper mapper;
@@ -34,15 +34,23 @@ namespace FilmsLibrary.Queries
                 this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             }
 
-            public async Task<IEnumerable<FilmViewModel>> Handle(GetFilmsRequest request, CancellationToken cancellationToken)
+            public async Task<ItemsPage<FilmViewModel>> Handle(GetFilmsRequest request, CancellationToken cancellationToken)
             {
-                return await context.Films
+                var items = await context.Films
                     .AsNoTracking()
                     .Skip(request.Offset.Value)
                     .Take(request.PageSize.Value)
                     .OrderBy(f => f.Title)
                     .ProjectTo<FilmViewModel>(mapper.ConfigurationProvider)
                     .ToListAsync(cancellationToken);
+
+                var total = await context.Films.CountAsync(cancellationToken);
+
+                return new ItemsPage<FilmViewModel>(items, total) 
+                { 
+                    Offset = request.Offset.Value, 
+                    Size = request.PageSize.Value 
+                };
             }
         }
 

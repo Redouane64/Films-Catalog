@@ -1,10 +1,10 @@
-﻿@model IEnumerable<FilmViewModel>
+﻿@model ItemsPage<FilmViewModel>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Films</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -13,16 +13,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                Title
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Year)
+                Year
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Items) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
@@ -37,4 +37,20 @@
         </tr>
 }
     </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3">
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item @(Model.HasPrevious ? "" : "disabled")">
+                            <a class="page-link" href="#">Previous</a>
+                        </li>
+                        <li class="page-item @(Model.HasNext ? "" : "disabled")">
+                            <a class="page-link " href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </td>
+        </tr>
+    </tfoot>
 </table>
