@@ -5,8 +5,8 @@ namespace Films.WebSite.Models
     public class SignInCredentials
     {
         [Required]
-        [Display(Name = "E-mail")]
-        public string Email { get; set; }
+        [Display(Name = "Username")]
+        public string UserName { get; set; }
 
         [Required]
         public string Password { get; set; }

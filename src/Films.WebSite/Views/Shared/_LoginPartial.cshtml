@@ -6,8 +6,8 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <li class="nav-item">
-        <form  class="form-inline" asp-controller="Account" asp-action="Logout">
-            <button  type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+        <form  class="form-inline" asp-controller="Account" asp-action="LogOut">
+            <button  type="submit" class="nav-link btn btn-link text-dark">Sign Out</button>
         </form>
     </li>
 }

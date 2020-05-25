@@ -14,6 +14,7 @@ namespace Films.WebSite.Models
 
         [Display(Name = "E-mail")]
         [Required]
+        [EmailAddress]
         public string Email { get; set; }
 
         [Required]

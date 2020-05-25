@@ -50,11 +50,15 @@ namespace Films.WebSite.Controllers
 
             if (!result.Succeeded)
             {
-                // TODO: do something
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(String.Empty, error.Description);
+                }
+
                 return View();
             }
 
-            await signInManager.SignInAsync(user, false);
+            await signInManager.SignInAsync(user, true);
 
             return RedirectToActionPermanent(nameof(FilmsController.Index), "Films");
         }
@@ -73,11 +77,19 @@ namespace Films.WebSite.Controllers
                 return View(credentials);
             }
 
-            var result = await signInManager.PasswordSignInAsync(credentials.Email, credentials.Password, credentials.RememberMe, false);
+            var user = await userManager.FindByNameAsync(credentials.UserName);
+
+            if(user is null)
+            {
+                ModelState.AddModelError(String.Empty, "Invalid credentials.");
+                return View();
+            }
+
+            var result = await signInManager.PasswordSignInAsync(user, credentials.Password, credentials.RememberMe, false);
 
             if(!result.Succeeded)
             {
-                // TODO: do something
+                ModelState.AddModelError(String.Empty, "Invalid credentials.");
                 return View();
             }
 
@@ -89,7 +101,7 @@ namespace Films.WebSite.Controllers
         [Authorize]
         public async Task<IActionResult> LogOut()
         {
-            await signInManager.SignOutAsync();
+            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
             return RedirectToActionPermanent(nameof(FilmsController.Index), "Films");
         }
     }
