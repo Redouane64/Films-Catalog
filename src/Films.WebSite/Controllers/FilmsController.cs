@@ -10,6 +10,7 @@ using FilmsLibrary.Queries;
 using System.Threading;
 using FilmsLibrary.Commands;
 using Films.WebSite.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Films.WebSite.Controllers
 {
@@ -17,11 +18,13 @@ namespace Films.WebSite.Controllers
     {
         private readonly ILogger<FilmsController> logger;
         private readonly IMediator mediator;
+        private readonly IAuthorizationService authorizationService;
 
-        public FilmsController(ILogger<FilmsController> logger, IMediator mediator)
+        public FilmsController(ILogger<FilmsController> logger, IMediator mediator, IAuthorizationService authorizationService)
         {
             this.logger = logger;
             this.mediator = mediator;
+            this.authorizationService = authorizationService;
         }
 
         #region View films
@@ -39,6 +42,8 @@ namespace Films.WebSite.Controllers
         #endregion
 
         #region Create film
+
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -46,6 +51,7 @@ namespace Films.WebSite.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create(CreateFilmRequest request, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
@@ -59,19 +65,34 @@ namespace Films.WebSite.Controllers
         #endregion
 
         #region Edit film
+        [Authorize]
         public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
         {
+            var authorizationResult = await authorizationService.AuthorizeAsync(User, id, "IsOwner");
+            if(!authorizationResult.Succeeded)
+            {
+                return Forbid();
+            }
+
             return View(await mediator.Send(new GetFilmByIdRequest(id), cancellationToken));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(EditFilmRequest request, CancellationToken cancellationToken)
         {
+            var authorizationResult = await authorizationService.AuthorizeAsync(User, request.Id, "IsOwner");
+            if (!authorizationResult.Succeeded)
+            {
+                return Forbid();
+            }
+
             if(!ModelState.IsValid)
             {
                 return View(request);
             }
+
 
             await mediator.Send(request, cancellationToken);
 

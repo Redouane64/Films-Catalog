@@ -17,6 +17,8 @@ using MediatR;
 using AutoMapper;
 using FilmsLibrary.Options;
 using FilmsLibrary.Filters;
+using Microsoft.AspNetCore.Authorization;
+using Films.WebSite.Infrastructure;
 
 namespace Films.WebSite
 {
@@ -47,7 +49,7 @@ namespace Films.WebSite
 
             services.AddAuthentication(options => {
                 options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
-                options.DefaultSignOutScheme = IdentityConstants.ExternalScheme;
+                options.DefaultScheme = IdentityConstants.ApplicationScheme;
             })
             .AddCookie(IdentityConstants.ApplicationScheme,
                 options => {
@@ -58,7 +60,13 @@ namespace Films.WebSite
                         
                 });
 
-            services.AddAuthorization();
+            services.AddAuthorization(options => {
+                options.AddPolicy("IsOwner", config =>
+                {
+                    config.RequireAuthenticatedUser();
+                    config.AddRequirements(new IsOwnerAuthorizationRequirement());
+                });
+            });
 
             services.AddIdentityCore<User>(options =>
             {
@@ -77,6 +85,8 @@ namespace Films.WebSite
             services.AddAutoMapper(typeof(Startup));
 
             services.Configure<DefaultPagingOptions>(Configuration.GetSection(nameof(DefaultPagingOptions)));
+
+            services.AddScoped<IAuthorizationHandler, IsOwnerAuthorizationHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

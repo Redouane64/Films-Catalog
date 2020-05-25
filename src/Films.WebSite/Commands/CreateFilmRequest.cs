@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,6 +8,8 @@ using Films.Website.Domain;
 using Films.WebSite.Data;
 
 using MediatR;
+
+using Microsoft.AspNetCore.Http;
 
 namespace FilmsLibrary.Commands
 {
@@ -26,10 +29,12 @@ namespace FilmsLibrary.Commands
         public class CreateFilmRequestHandler : IRequestHandler<CreateFilmRequest, int>
         {
             private readonly DataContext context;
+            private readonly IHttpContextAccessor httpContextAccessor;
 
-            public CreateFilmRequestHandler(DataContext context)
+            public CreateFilmRequestHandler(DataContext context, IHttpContextAccessor httpContextAccessor)
             {
                 this.context = context ?? throw new ArgumentNullException(nameof(context));
+                this.httpContextAccessor = httpContextAccessor;
             }
 
             public async Task<int> Handle(CreateFilmRequest request, CancellationToken cancellationToken)
@@ -41,7 +46,7 @@ namespace FilmsLibrary.Commands
                     ReleaseYear = request.Year,
                     Director = request.Director,
 
-                    // TODO: set creator.
+                    CreatorId = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)
                 };
 
                 try

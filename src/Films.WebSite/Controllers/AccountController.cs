@@ -104,5 +104,7 @@ namespace Films.WebSite.Controllers
             await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
             return RedirectToActionPermanent(nameof(FilmsController.Index), "Films");
         }
+
+        public IActionResult AccessDenied() => View();
     }
 }
