@@ -22,9 +22,12 @@ namespace Films.WebSite
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IWebHostEnvironment environment;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            this.environment = environment;
         }
 
         public IConfiguration Configuration { get; }
@@ -42,12 +45,29 @@ namespace Films.WebSite
 
             services.AddRazorPages();
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme);
+            services.AddAuthentication(options => {
+                options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultSignOutScheme = IdentityConstants.ExternalScheme;
+            })
+            .AddCookie(IdentityConstants.ApplicationScheme,
+                options => {
+                    options.Cookie.Name = "Films-Library";
+                    options.ClaimsIssuer = "Films-Library";
+                    options.LoginPath = "/Account/Login";
+                    options.LogoutPath = "/Account/LogOut";
+                        
+                });
+
             services.AddAuthorization();
 
             services.AddIdentityCore<User>(options =>
             {
-                // Identity stuff goes here..
+                if(environment.IsDevelopment())
+                {
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireUppercase = false;
+                }
             })
             .AddUserManager<UserManager<User>>()
             .AddSignInManager<SignInManager<User>>()
