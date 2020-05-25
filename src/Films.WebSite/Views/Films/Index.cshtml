@@ -4,12 +4,23 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Films</h1>
+<h1 class="text-md-center">  
+    <small class="text-muted">
+        <em>Welcome in our films catalog</em>
+    </small>
+</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
+<p class="text-md-center">
+    @if(User.Identity.IsAuthenticated)
+    {
+        <a class="btn btn-outline-success" asp-action="Create">Create New</a>
+    }
+    else
+    {
+        <em class="text-danger lead">Sign-In to add films to the catalog!</em>
+    }
 </p>
-<table class="table">
+<table class="table table-hover text-md-center table-responsive-md">
     <thead>
         <tr>
             <th>
@@ -18,21 +29,22 @@
             <th>
                 Year
             </th>
-            <th></th>
+            <th>
+                Director
+            </th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model.Items) {
-        <tr>
+        <tr class="justify-content-lg-start">
             <td>
-                @Html.DisplayFor(modelItem => item.Title)
+                <a asp-action="Details" asp-route-id="@item.Id">@item.Title</a>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Year)
+                @item.Year
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { Id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new { Id = item.Id })
+                @item.Director
             </td>
         </tr>
 }
@@ -40,16 +52,7 @@
     <tfoot>
         <tr>
             <td colspan="3">
-                <nav>
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item @(Model.HasPrevious ? "" : "disabled")">
-                            <a class="page-link" href="#">Previous</a>
-                        </li>
-                        <li class="page-item @(Model.HasNext ? "" : "disabled")">
-                            <a class="page-link " href="#">Next</a>
-                        </li>
-                    </ul>
-                </nav>
+
             </td>
         </tr>
     </tfoot>
