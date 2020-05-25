@@ -23,7 +23,6 @@ namespace Films.WebSite.Data
             modelBuilder.Ignore<IdentityRole>()
                         .Ignore<IdentityRoleClaim<string>>()
                         .Ignore<IdentityUserRole<string>>()
-                        .Ignore<IdentityUserClaim<string>>()
                         .Ignore<IdentityUserLogin<string>>()
                         .Ignore<IdentityUserToken<string>>();
 
@@ -33,8 +32,12 @@ namespace Films.WebSite.Data
                         .Ignore(e => e.EmailConfirmed)
                         .Ignore(e => e.LockoutEnabled)
                         .Ignore(e => e.LockoutEnd)
+                        .Ignore(e => e.PhoneNumber)
                         .Ignore(e => e.PhoneNumberConfirmed)
                         .Ignore(e => e.TwoFactorEnabled);
+
+            modelBuilder.Entity<IdentityUserClaim<string>>()
+                        .ToTable("user_claims", "catalog");
 
             modelBuilder.Entity<User>()
                 .ToTable("users", "catalog")
