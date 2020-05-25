@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A0B60697-B925-4532-9C94-AE97F9236AC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Films.WebSite", "src\Films.WebSite\Films.WebSite.csproj", "{0DCEFF0A-1945-4600-9FDF-D7146DF1E01C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Films.WebSite", "src\Films.WebSite\Films.WebSite.csproj", "{0DCEFF0A-1945-4600-9FDF-D7146DF1E01C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
