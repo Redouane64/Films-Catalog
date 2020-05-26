@@ -1,42 +1,47 @@
 ﻿@model FilmDetailsViewModel
 
+@inject IAuthorizationService AuthorizationService
+
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = $"Details | {Model.Title}";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4></h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Year)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Year)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Director)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Director)
-        </dd>
-    </dl>
+<div class="row justify-content-center">
+    <div class="col-6">
+        <h1 class="display-4">@Model.Title</h1>
+    </div>
 </div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { Id = Model.Id }) |
-    <a asp-action="Index">Back to List</a>
+
+<hr />
+
+<div class="row justify-content-center">
+    <div class="col-6">
+        <img src="https://images-na.ssl-images-amazon.com/images/I/61OU8oLWtiL._AC_SL1068_.jpg" alt="@Model.Title poster" width="256" />
+    </div>
+</div>
+
+<hr />
+
+<div class="row justify-content-center">
+    <div class="col-6">
+        <p class="text-muted">
+            @Model.Description
+        </p>
+        <dl>
+            <dt>Director</dt>
+            <dd class="font-italic text-capitalize">@Model.Director</dd>
+        </dl>
+    </div>
+</div>
+
+<hr />
+
+<div class="row justify-content-center">
+    <div class="col-auto">
+        <a asp-action="Index" class="btn btn-outline-danger">Back to List</a>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Model.Id, "IsOwner")).Succeeded)
+        {
+            <a asp-action="Edit" class="btn btn-outline-primary">Edit</a>            
+        }
+    </div>
 </div>
