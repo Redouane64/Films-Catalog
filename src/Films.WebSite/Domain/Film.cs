@@ -28,6 +28,10 @@ namespace Films.Website.Domain
         [Required]
         public string Director { get; set; }
 
+        [Column("image")]
+        [Required]
+        public byte[] Image { get; set; }
+
         [Column("creator_id")]
         public string CreatorId { get; set; }
         public User Creator { get; set; }

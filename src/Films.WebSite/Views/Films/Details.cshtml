@@ -16,7 +16,7 @@
 
 <div class="row justify-content-center">
     <div class="col-6">
-        <img src="https://images-na.ssl-images-amazon.com/images/I/61OU8oLWtiL._AC_SL1068_.jpg" alt="@Model.Title poster" width="256" />
+        <img src="@Model.Poster" alt="@Model.Title poster" width="256" />
     </div>
 </div>
 
@@ -30,6 +30,9 @@
         <dl>
             <dt>Director</dt>
             <dd class="font-italic text-capitalize">@Model.Director</dd>
+            <dt>Release Year</dt>
+            <dd class="font-italic text-capitalize">@Model.Year</dd>
+
         </dl>
     </div>
 </div>
@@ -41,7 +44,7 @@
         <a asp-action="Index" class="btn btn-outline-danger">Back to List</a>
         @if ((await AuthorizationService.AuthorizeAsync(User, Model.Id, "IsOwner")).Succeeded)
         {
-            <a asp-action="Edit" class="btn btn-outline-primary">Edit</a>            
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">Edit</a>            
         }
     </div>
 </div>

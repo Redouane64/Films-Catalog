@@ -11,6 +11,7 @@ using System.Threading;
 using FilmsLibrary.Commands;
 using Films.WebSite.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Films.WebSite.Models;
 
 namespace Films.WebSite.Controllers
 {
@@ -74,15 +75,16 @@ namespace Films.WebSite.Controllers
                 return Forbid();
             }
 
-            return View(await mediator.Send(new GetFilmByIdRequest(id), cancellationToken));
+            var film = await mediator.Send(new GetFilmByIdRequest(id), cancellationToken);
+            return View(film.ToModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Edit(EditFilmRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Edit(FilmModel filmModel, CancellationToken cancellationToken)
         {
-            var authorizationResult = await authorizationService.AuthorizeAsync(User, request.Id, "IsOwner");
+            var authorizationResult = await authorizationService.AuthorizeAsync(User, filmModel.Id, "IsOwner");
             if (!authorizationResult.Succeeded)
             {
                 return Forbid();
@@ -90,13 +92,12 @@ namespace Films.WebSite.Controllers
 
             if(!ModelState.IsValid)
             {
-                return View(request);
+                return View(filmModel);
             }
 
+            await mediator.Send(new EditFilmRequest(filmModel), cancellationToken);
 
-            await mediator.Send(request, cancellationToken);
-
-            return RedirectToActionPermanent(nameof(Details), new { request.Id });
+            return RedirectToActionPermanent(nameof(Details), new { filmModel.Id });
         }
         #endregion
 

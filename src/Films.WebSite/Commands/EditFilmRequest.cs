@@ -1,10 +1,10 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Films.Website.Domain;
 using Films.WebSite.Data;
+using Films.WebSite.Models;
 
 using MediatR;
 
@@ -14,18 +14,12 @@ namespace FilmsLibrary.Commands
 {
     public class EditFilmRequest : IRequest
     {
-        public int Id { get; set; }
+        public FilmModel Film { get; }
 
-        [Required]
-        public string Title { get; set; }
-
-        [Required]
-        public string Description { get; set; }
-
-        public int Year { get; set; }
-
-        [Required]
-        public string Director { get; set; }
+        public EditFilmRequest(FilmModel film)
+        {
+            Film = film;
+        }
 
         public class EditFilmRequestHandler : IRequestHandler<EditFilmRequest>
         {
@@ -38,19 +32,33 @@ namespace FilmsLibrary.Commands
 
             public async Task<Unit> Handle(EditFilmRequest request, CancellationToken cancellationToken)
             {
-                var film = await context.Films.SingleOrDefaultAsync(f => f.Id == request.Id, cancellationToken);
+                var film = await context.Films.SingleOrDefaultAsync(f => f.Id == request.Film.Id, cancellationToken);
 
                 if (film is null)
                 {
                     // TODO: do something?
-                    return await Task.FromCanceled<Unit>(cancellationToken);
+                    return await Unit.Task;
                 }
 
                 // We may use Object mapper if there are many properties.
-                film.Title = request.Title;
-                film.Description = request.Description;
-                film.ReleaseYear = request.Year;
-                film.Director = request.Director;
+                film.Title = request.Film.Title;
+                film.Description = request.Film.Description;
+                film.ReleaseYear = request.Film.Year;
+                film.Director = request.Film.Director;
+
+                if (request.Film.Poster != null)
+                {
+                    // Process film poster
+                    using (var imageStream = new MemoryStream())
+                    using (var uploadedImageStream = request.Film.Poster.OpenReadStream())
+                    {
+                        await uploadedImageStream.CopyToAsync(imageStream);
+
+                        film.Image = imageStream.ToArray();
+                    }
+
+                    context.Entry(film).Property(e => e.Image).IsModified = true;
+                }
 
                 // If we want to update only some specific columns/properties
                 // we may use DbContext.Entry(<tracked-entity>).Property(e => e.<Some-Property>).IsModified = true

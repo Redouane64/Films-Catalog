@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using Films.WebSite.Data;
 using MediatR;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FilmsLibrary.Commands
 {
@@ -25,6 +27,9 @@ namespace FilmsLibrary.Commands
         public string Director { get; set; }
 
         public int Year { get; set; }
+
+        [FromForm]
+        public IFormFile Poster { get; set; }
 
         public class CreateFilmRequestHandler : IRequestHandler<CreateFilmRequest, int>
         {
@@ -48,6 +53,15 @@ namespace FilmsLibrary.Commands
 
                     CreatorId = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)
                 };
+
+                // Process film poster
+                using (var imageStream = new MemoryStream())
+                using (var uploadedImageStream = request.Poster.OpenReadStream())
+                {
+                    await uploadedImageStream.CopyToAsync(imageStream);
+
+                    film.Image = imageStream.ToArray();
+                }
 
                 try
                 {

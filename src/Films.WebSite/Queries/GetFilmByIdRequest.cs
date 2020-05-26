@@ -49,7 +49,8 @@ namespace FilmsLibrary.Queries
             public FilmDetailsMappingProfile()
             {
                 CreateMap<Film, FilmDetailsViewModel>()
-                    .ForMember(dest => dest.Year, options => options.MapFrom(source => source.ReleaseYear));
+                    .ForMember(dest => dest.Year, options => options.MapFrom(source => source.ReleaseYear))
+                    .ForMember(dest => dest.Poster, options => options.MapFrom(source => String.Format("data: image/*; base64, {0}", Convert.ToBase64String(source.Image))));
             }
         }
     }
