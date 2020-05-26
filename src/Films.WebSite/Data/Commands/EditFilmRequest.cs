@@ -36,7 +36,6 @@ namespace FilmsLibrary.Commands
 
                 if (film is null)
                 {
-                    // TODO: do something?
                     return await Unit.Task;
                 }
 
@@ -76,7 +75,6 @@ namespace FilmsLibrary.Commands
                 }
                 catch (Exception)
                 {
-                    // TODO: Exceptions.
                     throw;
                 }
 

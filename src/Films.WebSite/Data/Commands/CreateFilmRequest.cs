@@ -71,7 +71,6 @@ namespace FilmsLibrary.Commands
                 }
                 catch (Exception)
                 {
-                    // TODO: Exceptions.
                     throw;
                 }
 

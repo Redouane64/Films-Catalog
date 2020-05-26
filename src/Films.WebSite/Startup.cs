@@ -19,6 +19,7 @@ using FilmsLibrary.Options;
 using FilmsLibrary.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Films.WebSite.Infrastructure;
+using Microsoft.AspNetCore.ResponseCompression;
 
 namespace Films.WebSite
 {
@@ -87,11 +88,19 @@ namespace Films.WebSite
             services.Configure<DefaultPagingOptions>(Configuration.GetSection(nameof(DefaultPagingOptions)));
 
             services.AddScoped<IAuthorizationHandler, IsOwnerAuthorizationHandler>();
+
+            services.AddResponseCaching();
+            services.AddResponseCompression(options =>
+            {
+                options.Providers.Add<BrotliCompressionProvider>();
+                options.Providers.Add<GzipCompressionProvider>();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -103,10 +112,14 @@ namespace Films.WebSite
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseStatusCodePages();
             app.UseRouting();
+
+            app.UseResponseCompression();
+            app.UseResponseCaching();
 
             app.UseAuthentication();
             app.UseAuthorization();
