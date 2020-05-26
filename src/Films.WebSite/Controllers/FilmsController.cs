@@ -38,7 +38,14 @@ namespace Films.WebSite.Controllers
         #region View film details
         public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)
         {
-            return View(await mediator.Send(new GetFilmByIdRequest(id), cancellationToken));
+            var film = await mediator.Send(new GetFilmByIdRequest(id), cancellationToken);
+
+            if(film is null)
+            {
+                return Error404();
+            }
+
+            return View(film);
         } 
         #endregion
 
@@ -105,6 +112,11 @@ namespace Films.WebSite.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public IActionResult Error404()
+        {
+            return new ViewResult { StatusCode = 404, ViewName = "NotFound" };
         }
     }
 }

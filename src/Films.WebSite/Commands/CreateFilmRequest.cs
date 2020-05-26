@@ -29,6 +29,7 @@ namespace FilmsLibrary.Commands
         public int Year { get; set; }
 
         [FromForm]
+        [Required]
         public IFormFile Poster { get; set; }
 
         public class CreateFilmRequestHandler : IRequestHandler<CreateFilmRequest, int>
