@@ -42,7 +42,7 @@ namespace FilmsLibrary.Queries
             {
                 var total = await context.Films.CountAsync(cancellationToken);
                 
-                if(request.PageSize > total)
+                if(total != 0 && request.PageSize > total)
                 {
                     request.PageSize = total;
                 }
