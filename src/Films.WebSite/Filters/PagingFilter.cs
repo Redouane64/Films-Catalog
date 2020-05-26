@@ -27,7 +27,10 @@ namespace FilmsLibrary.Filters
             foreach (var argument in pagingOptionsArguments)
             {
                 argument.Offset ??= options.Offset;
+                argument.Offset = argument.Offset < 0 ? 0 : argument.Offset;
+
                 argument.PageSize ??= options.Size;
+
             }
         }
     }

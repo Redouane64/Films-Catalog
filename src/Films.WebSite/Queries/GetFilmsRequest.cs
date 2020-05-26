@@ -13,6 +13,7 @@ using Films.WebSite.Models.ViewModels;
 
 using MediatR;
 
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FilmsLibrary.Queries
@@ -20,7 +21,10 @@ namespace FilmsLibrary.Queries
     public class GetFilmsRequest : IRequest<ItemsPage<FilmViewModel>>
     {
 
+        [FromQuery]
         public int? PageSize { get; set; }
+
+        [FromQuery]
         public int? Offset { get; set; }
 
         public class GetFilmsRequestHandler : IRequestHandler<GetFilmsRequest, ItemsPage<FilmViewModel>>
@@ -36,6 +40,13 @@ namespace FilmsLibrary.Queries
 
             public async Task<ItemsPage<FilmViewModel>> Handle(GetFilmsRequest request, CancellationToken cancellationToken)
             {
+                var total = await context.Films.CountAsync(cancellationToken);
+                
+                if(request.PageSize > total)
+                {
+                    request.PageSize = total;
+                }
+
                 var items = await context.Films
                     .AsNoTracking()
                     .Skip(request.Offset.Value)
@@ -43,8 +54,6 @@ namespace FilmsLibrary.Queries
                     .OrderBy(f => f.Title)
                     .ProjectTo<FilmViewModel>(mapper.ConfigurationProvider)
                     .ToListAsync(cancellationToken);
-
-                var total = await context.Films.CountAsync(cancellationToken);
 
                 return new ItemsPage<FilmViewModel>(items, total) 
                 { 

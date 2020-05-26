@@ -52,7 +52,31 @@
     <tfoot>
         <tr>
             <td colspan="3">
-
+                <ul class="pagination justify-content-center mb-0">
+                    @{ 
+                        var next = Model.Offset + Model.Size;
+                        var previous = Math.Max(Model.Offset - Model.Size, 0);
+                        var isFirst = Model.Offset == 0;
+                        var isLast = (Model.Offset * Model.Size) >= Model.Total - 1 || Model.Size >= Model.Total;
+                    }
+                    <li class="page-item @(isFirst ? "disabled" : String.Empty)">
+                        <a class="page-link" asp-action="Index" asp-route-offset="0" asp-route-pageSize="@Model.Size">First</a>
+                    </li>
+                    <li class="page-item @(Model.HasPrevious ? String.Empty : "disabled")">
+                        <a class="page-link" asp-action="Index" asp-route-offset="@previous" asp-route-pageSize="@Model.Size">Previous</a>
+                    </li>
+                    <li class="page-item @(Model.HasNext ? String.Empty : "disabled")">
+                        <a class="page-link" asp-action="Index" asp-route-Offset="@next" asp-route-pageSize="@Model.Size">Next</a>
+                    </li>
+                    <li class="page-item @(isLast ? "disabled" : String.Empty)">
+                        <a class="page-link" asp-action="Index" asp-route-Offset="@(Math.Ceiling((Model.Total - (double)Model.Size) / Model.Size) * Model.Size)" asp-route-pageSize="@Model.Size">Last</a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        <tr class="table-sm">
+            <td colspan="3">
+                <p class="mb-0 "><small>Showing @(Math.Min(Model.Size, Model.Total)) from @Model.Total items</small></p>
             </td>
         </tr>
     </tfoot>

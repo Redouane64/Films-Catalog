@@ -8,8 +8,8 @@ namespace Films.WebSite.Models.ViewModels
         public int Offset { get; set; }
         public int Size { get; set; }
 
-        public bool HasNext => Offset < Total - 1;
-        public bool HasPrevious => Offset > 1;
+        public bool HasNext => (Offset + Size) < Total;
+        public bool HasPrevious => Offset > 0;
 
         public IEnumerable<T> Items { get; set; }
 
