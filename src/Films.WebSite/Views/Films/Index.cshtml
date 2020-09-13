@@ -35,7 +35,18 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Items) {
+@if(Model.Total == 0) 
+{
+    <tr class="justify-content-lg-start">
+        <td colspan="3">
+            <em>No films found, Sign-in to add films.</em>
+        </td>
+    </tr>
+}
+else 
+{
+    @foreach (var item in Model.Items) 
+    {
         <tr class="justify-content-lg-start">
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">@item.Title</a>
@@ -47,6 +58,7 @@
                 @item.Director
             </td>
         </tr>
+    }
 }
     </tbody>
     <tfoot>

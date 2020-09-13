@@ -41,24 +41,30 @@ namespace FilmsLibrary.Queries
             public async Task<ItemsPage<FilmViewModel>> Handle(GetFilmsRequest request, CancellationToken cancellationToken)
             {
                 var total = await context.Films.CountAsync(cancellationToken);
-                
-                if(request.PageSize > total)
+
+                if (request.PageSize > total)
                 {
                     request.PageSize = total;
                 }
 
-                var items = await context.Films
-                    .AsNoTracking()
-                    .Skip(request.Offset.Value)
-                    .Take(request.PageSize.Value)
-                    .OrderBy(f => f.Title)
-                    .ProjectTo<FilmViewModel>(mapper.ConfigurationProvider)
-                    .ToListAsync(cancellationToken);
+                var items = context.Films
+                    .AsNoTracking();
 
-                return new ItemsPage<FilmViewModel>(items, total) 
-                { 
-                    Offset = request.Offset.Value, 
-                    Size = request.PageSize.Value 
+                if (total > 0)
+                {
+                    items = items.Skip(request.Offset.Value)
+                                 .Take(request.PageSize.Value);
+                }
+
+                return new ItemsPage<FilmViewModel>(
+                    await items
+                        .OrderBy(f => f.Title)
+                        .ProjectTo<FilmViewModel>(mapper.ConfigurationProvider)
+                        .ToListAsync(cancellationToken), 
+                    total
+                ) {
+                    Offset = request.Offset.Value,
+                    Size = request.PageSize.Value
                 };
             }
         }
